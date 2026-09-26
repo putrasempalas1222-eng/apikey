@@ -3,6 +3,11 @@
 This is a server-only proxy. It keeps provider API keys in Vercel, not in the
 extension, Firebase, source files, or the deployed VSIX.
 
+It also verifies the signed-in Firebase user and charges token quota / backup
+credits atomically on the server. Configure the Firebase Admin variables from
+`.env.example` in Vercel before deploying. Do not place their values in this
+repository or the extension.
+
 ## Deploy
 
 1. Import this folder into a new Vercel project (or run `npx vercel` here).
