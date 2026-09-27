@@ -15,7 +15,8 @@ async function main() {
   })
   const session = await signedIn.json()
   if (!signedIn.ok || !session.idToken) throw new Error("Could not create a temporary Firebase test session.")
-  const probe = await fetch("https://apikey-pearl.vercel.app/api/profile/bootstrap", {
+  const proxyUrl = process.env.PROXY_URL || "https://apikey-pearl.vercel.app"
+  const probe = await fetch(`${proxyUrl.replace(/\/$/, "")}/api/profile/bootstrap`, {
     method: "POST",
     headers: { Authorization: `Bearer ${session.idToken}` },
   })
