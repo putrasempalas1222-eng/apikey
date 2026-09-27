@@ -40,10 +40,10 @@ const dahlModels = {
     maxOutput: 8000,
     description: "MiniMax M2.7 flagship model via Dahl Global."
   },
-      "deepseek-v4-flash-0731": {
+  "deepseek-v4-flash-0731": {
     modelId: "deepseek-ai/DeepSeek-V4-Flash-0731",
     name: "DeepSeek V4 Flash",
-    enabled: false,
+    enabled: true,
     free: true,
     reasoning: false,
     contextWindow: 128000,
