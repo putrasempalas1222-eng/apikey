@@ -26,7 +26,9 @@ const codeCraftProvider = {
   name: "CodeCraft API",
   enabled: true,
   baseUrl: "https://codecraftapi.com/v1",
-  protocol: "openai-compatible"
+  protocol: "openai-compatible",
+  useDirectUrl: true,
+  apiKey: "cc_7HzkGJbVq9gTftZH1ZlY9kHXXBIdLhxAbM1jqv1NR9vAQh15"
 }
 
 const codeCraftModels = {
