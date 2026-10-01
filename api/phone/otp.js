@@ -86,6 +86,15 @@ module.exports = async (request, response) => {
         return fail(response, 503, "Konfigurasi OTP tidak lengkap di server: variabel OTP_SEND_API_KEY tidak terbaca. Tambahkan di Vercel (Settings → Environment Variables, project apikey-pearl, centang Production) lalu Redeploy.")
       }
 
+      // Anti-spam cooldown: one code per minute per account.
+      const recordRes = await adminRest(app, `users/${user.uid}/phoneVerification.json`)
+      const existing = recordRes.ok ? await recordRes.json() : null
+      const elapsed = existing?.lastSentAt ? Date.now() - Number(existing.lastSentAt) : Infinity
+      if (elapsed < 60000) {
+        const wait = Math.ceil((60000 - elapsed) / 1000)
+        return fail(response, 429, `Tunggu ${wait} detik sebelum meminta kode baru.`)
+      }
+
       const code = String(randomInt(100000, 1000000))
       const controller = new AbortController()
       const timer = setTimeout(() => controller.abort(), EXTERNAL_TIMEOUT_MS)
@@ -114,7 +123,7 @@ module.exports = async (request, response) => {
       const now = Date.now()
       await adminRest(app, `users/${user.uid}/phoneVerification.json`, {
         method: "PUT",
-        body: JSON.stringify({ phone: normalized, hash: hashOtp(code, normalized), expiresAt: now + OTP_TTL_MS, attempts: 0, updatedAt: now }),
+        body: JSON.stringify({ phone: normalized, hash: hashOtp(code, normalized), expiresAt: now + OTP_TTL_MS, attempts: 0, lastSentAt: now, updatedAt: now }),
       })
       return response.status(200).json({ ok: true, sent: true, expiresIn: OTP_TTL_MS })
     }
