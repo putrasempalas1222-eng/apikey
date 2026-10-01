@@ -6,7 +6,8 @@
     "node": ">=20"
   },
   "dependencies": {
-    "firebase-admin": "^13.6.1"
+    "firebase-admin": "^13.6.1",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "vercel": "^60.1.3"
