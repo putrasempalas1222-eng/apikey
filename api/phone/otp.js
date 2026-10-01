@@ -77,13 +77,13 @@ module.exports = async (request, response) => {
         return fail(response, 403, `Nomor ini sudah terhubung ke ${MAX_ACCOUNTS_PER_PHONE} akun. Gunakan nomor lain.`)
       }
 
+      // URL is safe to ship in code (just an endpoint address); only the key
+      // is secret and must come from the environment.
+      const url = process.env.OTP_SEND_URL || "http://203.194.114.5:30128/kirim-otp"
       const key = process.env.OTP_SEND_API_KEY
-      const url = process.env.OTP_SEND_URL
-      if (!key || !url) {
-        // Name exactly which variable is missing so the fix is obvious.
-        const missing = [!url ? "OTP_SEND_URL" : null, !key ? "OTP_SEND_API_KEY" : null].filter(Boolean).join(" dan ")
-        console.error(`OTP env incomplete for uid ${user.uid}: missing ${missing}`)
-        return fail(response, 503, `Konfigurasi OTP tidak lengkap di server: variabel ${missing} tidak terbaca. Tambahkan di Vercel (Settings → Environment Variables, project apikey-pearl, centang Production) lalu Redeploy.`)
+      if (!key) {
+        console.error(`OTP env incomplete for uid ${user.uid}: missing OTP_SEND_API_KEY`)
+        return fail(response, 503, "Konfigurasi OTP tidak lengkap di server: variabel OTP_SEND_API_KEY tidak terbaca. Tambahkan di Vercel (Settings → Environment Variables, project apikey-pearl, centang Production) lalu Redeploy.")
       }
 
       const code = String(randomInt(100000, 1000000))
