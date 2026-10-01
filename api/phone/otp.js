@@ -79,7 +79,12 @@ module.exports = async (request, response) => {
 
       const key = process.env.OTP_SEND_API_KEY
       const url = process.env.OTP_SEND_URL
-      if (!key || !url) return fail(response, 503, "Layanan OTP belum dikonfigurasi. Hubungi admin.")
+      if (!key || !url) {
+        // Name exactly which variable is missing so the fix is obvious.
+        const missing = [!url ? "OTP_SEND_URL" : null, !key ? "OTP_SEND_API_KEY" : null].filter(Boolean).join(" dan ")
+        console.error(`OTP env incomplete for uid ${user.uid}: missing ${missing}`)
+        return fail(response, 503, `Konfigurasi OTP tidak lengkap di server: variabel ${missing} tidak terbaca. Tambahkan di Vercel (Settings → Environment Variables, project apikey-pearl, centang Production) lalu Redeploy.`)
+      }
 
       const code = String(randomInt(100000, 1000000))
       const controller = new AbortController()
